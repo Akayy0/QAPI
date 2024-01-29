@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+
+<body>
+
+    <h1>API Test</h1>
+
+    <form id="usuarioForm">
+        <label for="nome">Nome do Usuário:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <button type="button" onclick="adicionarUsuario()">Adicionar Usuário</button>
+        <button type="button" onclick="obterTodosUsuarios()">Obter Todos os Usuários</button>
+    </form>
+
+    <div id="usuariosList">
+        <!-- Aqui será exibida a lista de usuários -->
+    </div>
+
+    <script>
+        async function adicionarUsuario() {
+            const nome = document.getElementById('nome').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/usuarios', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome }),
+                });
+
+                const data = await response.json();
+                console.log('Novo usuário adicionado:', data);
+            } catch (error) {
+                console.error('Erro ao adicionar usuário:', error);
+            }
+        }
+
+        async function obterTodosUsuarios() {
+            try {
+                const response = await fetch('http://localhost:3000/usuarios');
+                const data = await response.json();
+
+                // Limpa a lista de usuários
+                const usuariosList = document.getElementById('usuariosList');
+                usuariosList.innerHTML = '';
+
+                // Adiciona os usuários à lista
+                data.forEach(usuario => {
+                    const usuarioItem = document.createElement('div');
+                    usuarioItem.textContent = `ID: ${usuario.id}, Nome: ${usuario.nome}`;
+                    usuariosList.appendChild(usuarioItem);
+                });
+
+            } catch (error) {
+                console.error('Erro ao obter usuários:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>
